@@ -1,0 +1,48 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:5.2.0"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+}
+apply plugin: "com.github.johnrengelman.shadow"
+
+group 'ru.yakimov'
+version '1.0'
+
+sourceCompatibility = JavaVersion.VERSION_11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile 'org.openjfx:javafx-controls:11.0.2'
+    compile group: 'com.google.inject', name: 'guice', version: '4.2.3'
+    compile "io.reactivex.rxjava3:rxjava:3.0.2"
+    compile group: 'log4j', name: 'log4j', version: '1.2.7'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
+}
+
+javafx {
+    version = "11.0.2"
+    modules = ['javafx.controls']
+}
+
+shadowJar {
+    manifest {
+        attributes(
+                'Main-Class': 'ru.yakimov.Visualizer'
+        )
+    }
+}
