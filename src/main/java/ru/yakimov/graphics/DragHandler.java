@@ -1,40 +1,53 @@
 package ru.yakimov.graphics;
 
-import java.util.function.Consumer;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.Shape;
+import ru.yakimov.util.PointConsumer;
 
 public class DragHandler {
+	private boolean isDragging = false;
+	private PointConsumer startDragCallback;
+	private PointConsumer dragCallback;
+	private PointConsumer endDragCallback;
 
-	private boolean isDragging;
-	private Point2D last;
-
-	private Consumer<Point2D> startDragCallback;
-	private Consumer<Point2D> dragCallback;
-	private Consumer<Point2D> endDragCallback;
+	private double offsetX = 0;
+	private double offsetY = 0;
 
 	private double acceleration = 1d;
 
 	DragHandler(
-		Shape node,
-		Consumer<Point2D> startDragCallback,
-		Consumer<Point2D> dragCallback,
-		Consumer<Point2D> endDragCallback
+		Node node,
+		PointConsumer startDragCallback,
+		PointConsumer dragCallback,
+		PointConsumer endDragCallback
 	) {
 		this.startDragCallback = startDragCallback;
 		this.dragCallback = dragCallback;
 		this.endDragCallback = endDragCallback;
 
+		node.setOnMousePressed(
+			event -> {
+				offsetX = event.getX();
+				offsetY = event.getY();
+				if (startDragCallback != null) {
+					startDragCallback.accept(offsetX, offsetY);
+				}
+				isDragging = true;
+			}
+		);
+
 		node.addEventFilter(MouseEvent.MOUSE_DRAGGED, event -> {
 			Point2D p = new Point2D(event.getX(), event.getY());
 			drag(p);
+			event.consume();
 		});
 
 		node.addEventFilter(
 			MouseEvent.MOUSE_RELEASED, event -> {
 				if (isDragging) {
-					endDragging(new Point2D(event.getX(), event.getY()));
+					endDragging(event.getX(), event.getY());
+					isDragging = false;
 				}
 			}
 		);
@@ -42,22 +55,14 @@ public class DragHandler {
 
 
 	private void drag(Point2D p) {
-		if (last == null) {
-			if (startDragCallback != null) {
-				startDragCallback.accept(p);
-			}
-		} else if (dragCallback != null) {
-			dragCallback.accept(p.subtract(last).multiply(acceleration));
+		if (dragCallback != null) {
+			dragCallback.accept((p.getX() - offsetX) * acceleration, (p.getY() - offsetY) * acceleration);
 		}
-		last = p;
-		isDragging = true;
 	}
 
-	private void endDragging(Point2D p) {
-		last = null;
-		isDragging = false;
+	private void endDragging(double x, double y) {
 		if (endDragCallback != null) {
-			endDragCallback.accept(p);
+			endDragCallback.accept(x, y);
 		}
 	}
 

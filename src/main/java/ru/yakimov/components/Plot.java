@@ -19,19 +19,12 @@ public class Plot extends Path {
 	public Plot(Function<Double, Double> function, Viewport viewport) {
 		this.function = function;
 		this.viewport = viewport;
-		viewport.widthProperty().addListener(
-			(observable, oldValue, newValue) -> createPath()
-		);
-		viewport.heightProperty().addListener(
-			(observable, oldValue, newValue) -> createPath()
-		);
-
-		createPath();
+		viewport.addBordersChangeListener(this::createPath);
 	}
 
 	private void createPath() {
 		getElements().clear();
-		int numPoints = 80;
+		int numPoints = 150;
 		double step = (viewport.getR() - viewport.getL()) / numPoints;
 		double x = viewport.getL();
 		double y = function.apply(x);

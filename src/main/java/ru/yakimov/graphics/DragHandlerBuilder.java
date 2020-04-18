@@ -1,15 +1,14 @@
 package ru.yakimov.graphics;
 
-import java.util.function.Consumer;
-import javafx.geometry.Point2D;
-import javafx.scene.shape.Shape;
+import javafx.scene.Node;
+import ru.yakimov.util.PointConsumer;
 
 public final class DragHandlerBuilder {
 
-	private Shape node;
-	private Consumer<Point2D> startDragCallback;
-	private Consumer<Point2D> dragCallback;
-	private Consumer<Point2D> endDragCallback;
+	private Node node;
+	private PointConsumer startDragCallback;
+	private PointConsumer dragCallback;
+	private PointConsumer endDragCallback;
 
 	private DragHandlerBuilder() {
 	}
@@ -18,22 +17,22 @@ public final class DragHandlerBuilder {
 		return new DragHandlerBuilder();
 	}
 
-	public DragHandlerBuilder withNode(Shape node) {
+	public DragHandlerBuilder withNode(Node node) {
 		this.node = node;
 		return this;
 	}
 
-	public DragHandlerBuilder withStartDragCallback(Consumer<Point2D> startDragCallback) {
+	public DragHandlerBuilder withStartDragCallback(PointConsumer startDragCallback) {
 		this.startDragCallback = startDragCallback;
 		return this;
 	}
 
-	public DragHandlerBuilder withDragCallback(Consumer<Point2D> dragCallback) {
+	public DragHandlerBuilder withDragCallback(PointConsumer dragCallback) {
 		this.dragCallback = dragCallback;
 		return this;
 	}
 
-	public DragHandlerBuilder withEndDragCallback(Consumer<Point2D> endDragCallback) {
+	public DragHandlerBuilder withEndDragCallback(PointConsumer endDragCallback) {
 		this.endDragCallback = endDragCallback;
 		return this;
 	}
